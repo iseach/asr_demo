@@ -8,18 +8,18 @@ var record = null;
 time.init();
 
 var Recorder = function (stream) {
-    var sampleBits = 16; //输出采样数位 8, 16
-    var sampleRate = 8000; //输出采样率
+    var sampleBits = 16;
+    var sampleRate = 8000;
     var context = new AudioContext();
     var audioInput = context.createMediaStreamSource(stream);
     var recorder = context.createScriptProcessor(4096, 1, 1);
     var audioData = {
-        size: 0, //录音文件长度
-        buffer: [], //录音缓存
-        inputSampleRate: 48000, //输入采样率
-        inputSampleBits: 16, //输入采样数位 8, 16
-        outputSampleRate: sampleRate, //输出采样数位
-        oututSampleBits: sampleBits, //输出采样率
+        size: 0,
+        buffer: [],
+        inputSampleRate: 48000,
+        inputSampleBits: 16,
+        outputSampleRate: sampleRate,
+        oututSampleBits: sampleBits,
         clear: function () {
             this.buffer = [];
             this.size = 0;
@@ -28,15 +28,13 @@ var Recorder = function (stream) {
             this.buffer.push(new Float32Array(data));
             this.size += data.length;
         },
-        compress: function () { //合并压缩
-            //合并
+        compress: function () {
             var data = new Float32Array(this.size);
             var offset = 0;
             for (var i = 0; i < this.buffer.length; i++) {
                 data.set(this.buffer[i], offset);
                 offset += this.buffer[i].length;
             }
-            //压缩
             var compression = parseInt(this.inputSampleRate / this.outputSampleRate);
             var length = data.length / compression;
             var result = new Float32Array(length);
@@ -49,7 +47,7 @@ var Recorder = function (stream) {
             }
             return result;
         },
-        encodePCM: function () { //这里不对采集到的数据进行其他格式处理，如有需要均交给服务器端处理。
+        encodePCM: function () {
             var sampleRate = Math.min(this.inputSampleRate, this.outputSampleRate);
             var sampleBits = Math.min(this.inputSampleBits, this.oututSampleBits);
             var bytes = this.compress();
@@ -93,7 +91,7 @@ var Recorder = function (stream) {
             }
         };
         reader.readAsArrayBuffer(audioData.encodePCM());
-        audioData.clear();//每次发送完成则清理掉旧数据
+        audioData.clear();
     };
 
     this.start = function () {
@@ -123,14 +121,14 @@ var Recorder = function (stream) {
 }
 
 function useWebSocket() {
-    ws = new WebSocket("ws://192.168.1.33:8080/asr");
-    ws.binaryType = 'arraybuffer'; //传输的是 ArrayBuffer 类型的数据
+    ws = new WebSocket("wss://asr.nlp.ac.cn/asr");
+    ws.binaryType = 'arraybuffer';
     ws.onopen = function () {
         let newNode = document.createElement('div');
         newNode.innerHTML = 'Websocket Opened.';
         logBox.appendChild(newNode);
 
-        if (ws.readyState == 1) { //ws进入连接状态
+        if (ws.readyState == 1) {
             newNode = document.createElement('div');
             newNode.innerHTML = 'Websocket Connected.';
             logBox.appendChild(newNode);
@@ -173,41 +171,37 @@ function useWebSocket() {
 }
 
 begin.onclick = function () {
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-    if (!navigator.getUserMedia) {
-        alert('Unsupported Browser.');
-    } else {
-        navigator.getUserMedia({ audio: true },
-            function (mediaStream) {
-                record = new Recorder(mediaStream);
-                useWebSocket();
-            },
-            function (error) {
-                console.log(error);
-                switch (error.message || error.name) {
-                    case 'PERMISSION_DENIED':
-                    case 'PermissionDeniedError':
-                        console.info('Permission Denied.');
-                        break;
-                    case 'NOT_SUPPORTED_ERROR':
-                    case 'NotSupportedError':
-                        console.info('Not Supported.');
-                        break;
-                    case 'MANDATORY_UNSATISFIED_ERROR':
-                    case 'MandatoryUnsatisfiedError':
-                        console.info('Mandatory Unsatisfied.');
-                        break;
-                    default:
-                        console.info('Error: ' + (error.code || error.name));
-                        break;
-                }
+    navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((mediaStream) => {
+            record = new Recorder(mediaStream);
+            useWebSocket();
+        })
+        .catch((error) => {
+            console.log(error);
+            switch (error.message || error.name) {
+                case 'PERMISSION_DENIED':
+                case 'PermissionDeniedError':
+                    console.info('Permission Denied.');
+                    break;
+                case 'NOT_SUPPORTED_ERROR':
+                case 'NotSupportedError':
+                    console.info('Not Supported.');
+                    break;
+                case 'MANDATORY_UNSATISFIED_ERROR':
+                case 'MandatoryUnsatisfiedError':
+                    console.info('Mandatory Unsatisfied.');
+                    break;
+                default:
+                    console.info('Error: ' + (error.code || error.name));
+                    break;
             }
-        )
-    }
+        }
+        );
 }
 
 end.onclick = function () {
     if (ws) {
         ws.close();
     }
+    time.stop()
 }
