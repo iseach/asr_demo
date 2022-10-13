@@ -1,0 +1,26 @@
+#main {
+  width: 600px;
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  margin-left: -300px;
+}
+
+#timer-box h1 {
+  text-align: center;
+}
+
+#btn-box {
+  display: flex;
+  justify-content: center;
+}
+#btn-box button {
+  width: 100px;
+  height: 30px;
+}
+
+#log-box {
+  margin: 20px 0;
+  max-height: 70vh;
+  overflow-y: scroll;
+}
