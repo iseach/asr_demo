@@ -206,13 +206,13 @@ const stop = function () {
 }
 
 btn.addEventListener("click", ()=>{
-  if (btn.getAttribute("src") == "start.svg") {
+  if (btn.getAttribute("src") == "stop.svg") {
     start();
-    btn.setAttribute("src", "stop.svg");
+    btn.setAttribute("src", "start.svg");
     wave.style.display = "block";
   } else {
     stop();
-    btn.setAttribute("src", "start.svg");
+    btn.setAttribute("src", "stop.svg");
     wave.style.display = "none";
   }
 });
