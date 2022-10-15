@@ -6,7 +6,6 @@ const apiKey = document.querySelector("#apiKey");
 let params = (new URL(document.location)).searchParams;
 if (params.has("apiKey")) {
   apiKey.value = params.get("apiKey");
-  alert(apiKey.value);
 }
 
 var ws = null;
@@ -45,8 +44,7 @@ var Recorder = function (stream) {
       var compression = parseInt(this.inputSampleRate / this.outputSampleRate);
       var length = data.length / compression;
       var result = new Float32Array(length);
-      var index = 0,
-      j = 0;
+      var index = 0, j = 0;
       while (index < length) {
         result[index] = data[j];
         j += compression;
@@ -182,35 +180,35 @@ function useWebSocket() {
 
 const start = function () {
   navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((mediaStream) => {
-        record = new Recorder(mediaStream);
-        useWebSocket();
-      })
-      .catch((error) => {
-        console.log(error);
-        switch (error.message || error.name) {
-          case 'PERMISSION_DENIED':
-          case 'PermissionDeniedError':
-              console.info('Permission Denied.');
-              break;
-          case 'NOT_SUPPORTED_ERROR':
-          case 'NotSupportedError':
-              console.info('Not Supported.');
-              break;
-          case 'MANDATORY_UNSATISFIED_ERROR':
-          case 'MandatoryUnsatisfiedError':
-              console.info('Mandatory Unsatisfied.');
-              break;
-          default:
-              console.info('Error: ' + (error.code || error.name));
-              break;
-        }
-      });
+    .then((mediaStream) => {
+      record = new Recorder(mediaStream);
+      useWebSocket();
+    })
+    .catch((error) => {
+      console.log(error);
+      switch (error.message || error.name) {
+        case 'PERMISSION_DENIED':
+        case 'PermissionDeniedError':
+          console.info('Permission Denied.');
+          break;
+        case 'NOT_SUPPORTED_ERROR':
+        case 'NotSupportedError':
+          console.info('Not Supported.');
+          break;
+        case 'MANDATORY_UNSATISFIED_ERROR':
+        case 'MandatoryUnsatisfiedError':
+          console.info('Mandatory Unsatisfied.');
+          break;
+        default:
+          console.info('Error: ' + (error.code || error.name));
+          break;
+      }
+    });
 }
 
 const stop = function () {
   if (ws) {
-      ws.close();
+    ws.close();
   }
   time.stop();
   changeStatus("stop");
@@ -226,7 +224,7 @@ const changeStatus = (status) => {
   }
 }
 
-btn.addEventListener("click", ()=>{
+btn.addEventListener("click", () => {
   if (btn.getAttribute("src") == "stop.svg") {
     start();
   } else {
