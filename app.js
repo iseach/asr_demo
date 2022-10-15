@@ -1,8 +1,13 @@
-var logBox = document.getElementById('log-box');
-
+const logBox = document.querySelector('#log-box');
 const btn = document.querySelector("#btn");
 const wave = document.querySelector("#wave");
 const apiKey = document.querySelector("#apiKey");
+
+let params = (new URL(document.location)).searchParams;
+if (params.has("apiKey")) {
+  apiKey.value = params.get("apiKey");
+  alert(apiKey.value);
+}
 
 var ws = null;
 var record = null;
@@ -141,6 +146,7 @@ function useWebSocket() {
       newNode.innerHTML = 'Sending data via websocket…';
       logBox.appendChild(newNode);
     }
+    changeStatus("start");
   };
 
   ws.onmessage = function (msg) {
@@ -158,12 +164,15 @@ function useWebSocket() {
     let newNode = document.createElement('div');
     newNode.innerHTML = '<span style="color:red">Websocket Error.</span>';
     logBox.appendChild(newNode);
+    changeStatus("stop");
   }
 
   ws.onclose = function (msg) {
     console.info(msg)
     record.stop();
     record = null;
+
+    changeStatus("stop");
 
     let newNode = document.createElement('div');
     newNode.innerHTML = 'WebSocket Closed.';
@@ -196,25 +205,31 @@ const start = function () {
               console.info('Error: ' + (error.code || error.name));
               break;
         }
-      }
-      );
+      });
 }
 
 const stop = function () {
   if (ws) {
       ws.close();
   }
-  time.stop()
+  time.stop();
+  changeStatus("stop");
+}
+
+const changeStatus = (status) => {
+  if (status == "start") {
+    btn.setAttribute("src", "start.svg");
+    wave.style.display = "block";
+  } else {
+    btn.setAttribute("src", "stop.svg");
+    wave.style.display = "none";
+  }
 }
 
 btn.addEventListener("click", ()=>{
   if (btn.getAttribute("src") == "stop.svg") {
     start();
-    btn.setAttribute("src", "start.svg");
-    wave.style.display = "block";
   } else {
     stop();
-    btn.setAttribute("src", "stop.svg");
-    wave.style.display = "none";
   }
 });
