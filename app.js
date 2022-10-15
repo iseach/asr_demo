@@ -2,6 +2,7 @@ var logBox = document.getElementById('log-box');
 
 const btn = document.querySelector("#btn");
 const wave = document.querySelector("#wave");
+const apiKey = document.querySelector("#apiKey");
 
 var ws = null;
 var record = null;
@@ -71,25 +72,25 @@ var Recorder = function (stream) {
       var outbuffer = e.target.result;
       var arr = new Int8Array(outbuffer);
       if (arr.length > 0) {
-      var tmparr = new Int8Array(1024);
-      var j = 0;
-      for (var i = 0; i < arr.byteLength; i++) {
-        tmparr[j++] = arr[i];
-        if (((i + 1) % 1024) == 0) {
-        ws.send(tmparr);
-        if (arr.byteLength - i - 1 >= 1024) {
-          tmparr = new Int8Array(1024);
-        } else {
-          tmparr = new Int8Array(arr.byteLength - i - 1);
+        var tmparr = new Int8Array(1024);
+        var j = 0;
+        for (var i = 0; i < arr.byteLength; i++) {
+          tmparr[j++] = arr[i];
+          if (((i + 1) % 1024) == 0) {
+            ws.send(tmparr);
+            if (arr.byteLength - i - 1 >= 1024) {
+              tmparr = new Int8Array(1024);
+            } else {
+              tmparr = new Int8Array(arr.byteLength - i - 1);
+            }
+            j = 0;
+          }
+          if ((i + 1 == arr.byteLength) && ((i + 1) % 1024) != 0) {
+            ws.send(tmparr);
+          }
         }
-        j = 0;
       }
-      if ((i + 1 == arr.byteLength) && ((i + 1) % 1024) != 0) {
-        ws.send(tmparr);
-      }
-    }
-  }
-};
+    };
     reader.readAsArrayBuffer(audioData.encodePCM());
     audioData.clear();
   };
@@ -97,7 +98,7 @@ var Recorder = function (stream) {
   this.start = function () {
     time.start();
     audioInput.connect(recorder);
-      recorder.connect(context.destination);
+    recorder.connect(context.destination);
   }
 
   this.stop = function () {
@@ -121,6 +122,7 @@ var Recorder = function (stream) {
 }
 
 function useWebSocket() {
+  console.log(apiKey.value);
   ws = new WebSocket("wss://asr.nlp.ac.cn/asr");
   ws.binaryType = 'arraybuffer';
   ws.onopen = function () {
