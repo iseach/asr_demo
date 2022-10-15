@@ -123,7 +123,7 @@ var Recorder = function (stream) {
 
 function useWebSocket() {
   console.log(apiKey.value);
-  ws = new WebSocket("wss://asr.nlp.ac.cn/asr");
+  ws = new WebSocket("wss://asr.nlp.ac.cn/asr?apiKey=" + apiKey.value);
   ws.binaryType = 'arraybuffer';
   ws.onopen = function () {
     let newNode = document.createElement('div');
