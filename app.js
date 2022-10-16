@@ -149,6 +149,7 @@ function useWebSocket() {
 
   ws.onmessage = function (msg) {
     console.info(msg)
+    if (msg.data == `{"status": 0, "text": ""}`) return;
     let newNode = document.createElement('div');
     newNode.innerHTML = '<span style="color:red">Websocket Response: </span>';
     logBox.appendChild(newNode);
