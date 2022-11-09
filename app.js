@@ -15,7 +15,7 @@ time.init();
 
 var Recorder = function (stream) {
   var sampleBits = 16;
-  var sampleRate = 8000;
+  var sampleRate = 16000;
   var context = new AudioContext();
   var audioInput = context.createMediaStreamSource(stream);
   var recorder = context.createScriptProcessor(4096, 1, 1);
