@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Realtime ASR</title>
-  <link rel="stylesheet" href="https://unpkg.com/chota@latest">
+  <link rel="stylesheet" href="chota.min.css">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -14,23 +14,22 @@
     <div class="hero is-full-screen">
       <div class="logo is-vertical-align">
         <h3>A <strong>multilingual</strong> ASR playground</h3>
-        <small><em>Powered by FuSearch</em></small>
-
         <details>
-          <summary>Read more</summary>
-          <input id="apiKey" type="text" placeholder="input your apiKey here" />
+          <summary>Configurations</summary>
+          <label for="apiKey">apiKey</label><input id="apiKey" type="text" placeholder="input your apiKey here" />
+          <label for="endPoint">endPoint</label><input id="endPoint" type="text" placeholder="websocket address" />
         </details>
-
+        <small><em>Powered by FuSearch</em></small>
         <div id="log-box"></div>
 
         <h3 id="timer">00:00:00</h3>
         <div class="is-center">
           <div id="wave">
-              <span class="wave a1"></span>
-              <span class="wave a2"></span>
-              <span class="wave a3"></span>
-              <span class="wave a4"></span>
-              <span class="wave a5"></span>
+            <span class="wave a1"></span>
+            <span class="wave a2"></span>
+            <span class="wave a3"></span>
+            <span class="wave a4"></span>
+            <span class="wave a5"></span>
           </div>
         </div>
         <div class="is-center"><img id="btn" width="80" src="stop.svg"></div>

@@ -2,10 +2,20 @@ const logBox = document.querySelector('#log-box');
 const btn = document.querySelector("#btn");
 const wave = document.querySelector("#wave");
 const apiKey = document.querySelector("#apiKey");
+const endPoint = document.querySelector("#endPoint");
 
 let params = (new URL(document.location)).searchParams;
 if (params.has("apiKey")) {
   apiKey.value = params.get("apiKey");
+}
+if (params.has("endPoint")) {
+  endPoint.value = params.get("endPoint");
+} else {
+  if (location.host == "") {
+    endPoint.value = "ws://127.0.0.1:8080/asr";
+  } else {
+    endPoint.value = location.origin.replace(/^http/, 'ws') + "/asr";
+  }
 }
 
 var ws = null;
@@ -126,7 +136,8 @@ var Recorder = function (stream) {
 
 function useWebSocket() {
   console.log(apiKey.value);
-  ws = new WebSocket("wss://asr.nlp.ac.cn/asr?apiKey=" + apiKey.value);
+  console.log(endPoint.value);
+  ws = new WebSocket(endPoint.value + "?apiKey=" + apiKey.value);
   ws.binaryType = 'arraybuffer';
   ws.onopen = function () {
     let newNode = document.createElement('div');
